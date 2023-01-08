@@ -32,28 +32,24 @@ const login = async function (req, res) {
         .status(400)
         .send({ status: false, msg: "password is requied for validation" });
     } else if (Object.keys(data).length > 2) {
-      res
-        .status(400)
-        .send({
-          status: false,
-          msg: "plese check your details ones there is some invalid attribute",
-        });
+      res.status(400).send({
+        status: false,
+        msg: "plese check your details ones there is some invalid attribute",
+      });
     } else {
       let verifyDetails = await authorModel.findOne(data);
-      console.log(verifyDetails)
+      console.log(verifyDetails);
       if (verifyDetails == null) {
-        res
-          .status(400)
-          .send({
-            status: false,
-            msg: "you dont have an account / entered invalid credentials",
-          });
+        res.status(400).send({
+          status: false,
+          msg: "you dont have an account / entered invalid credentials",
+        });
       } else {
         let id = verifyDetails["_id"];
         console.log(id);
-        let createToken = jwt.sign({"userId":id}, "functionup-Project1");
+        let createToken = jwt.sign({ userId: id }, "functionup-Project1");
         res.header("x-api-key", createToken);
-        res.status(200).send({ "status": true, data: createToken });
+        res.status(200).send({ status: true, data: createToken });
       }
     }
   } catch (err) {
@@ -118,8 +114,29 @@ const createBlog = async function (req, res) {
     let data1 = req.body;
     let data2 = ObjectId(data1["authorId"]);
     let book = await authorModel.findOne({ _id: data2 });
-
-    if (book != null) {
+    let { title, body, category, subcategory, tags } = data1;
+    if(title!=undefined ){
+      title = title.trim();
+    }if(body!=undefined){
+      body=body.trim()
+    }if(category!=undefined){
+      category=category.trim()
+    }
+    if (title == undefined || title == "") {
+      res.status(400).send({ status: false, error: "plese enter title" });
+    }else if (body == undefined || body == "") {
+      res.status(400).send({ status: false, error: "plese enter body" });
+    }else if (category == undefined || category == "") {
+      res.status(400).send({ status: false, error: "plese enter category" });
+    }else if (subcategory == undefined) {
+      res.status(400).send({ status: false, error: "plese enter subcategory" });
+    }else if (tags == undefined) {
+      res.status(400).send({ status: false, error: "plese enter tags" });
+    }
+     else if (book != null) {
+      data1["title"] = title.trim();
+      data1["body"]=body.trim()
+      data1["category"]=category.trim()
       let books = await blogModel.create(data1);
       res.status(201).send({ status: true, data: books });
     } else {
