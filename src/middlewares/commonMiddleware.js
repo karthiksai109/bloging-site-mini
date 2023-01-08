@@ -6,8 +6,8 @@ const blogModel = require("../Models/BlogsModel");
 //__________________________ Validations : Name ___________________________________________
 
 const isValidName = function (name) {
-    const fnameRegex = /^[a-zA-Z]+$/;
-    return fnameRegex.test(name);
+    const fnameRegex = /^[A-Za-z]+$/ ;
+    return fnameRegex.test(name.trim());
     
 };
 
