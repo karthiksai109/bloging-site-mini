@@ -40,7 +40,7 @@ const isValidPassword = function (password) {
 
 const isValidEmail = function (email) {
   const emailRegex =
-  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z]+(?:\.[a-zA-Z]+)*$/;
+  /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i
   return emailRegex.test(email);
 };
 //-----------------------------------------------END-----------------------
@@ -104,11 +104,16 @@ const createAuthor = async function (req, res) {
           data: createData,
         });
       }
+    }else{
+      res.status(400).send({status:false,message:"plese enter some data....."})
     }
   } catch (err) {
     res.status(400).send({ status: false, msg: err.message });
   }
 };
+
+
+module.exports.createAuthor = createAuthor;
 //----------------------------------------END------------------------------------------------
 
 
@@ -417,6 +422,6 @@ const deleteByQuery = async (req, res) => {
 };
 
 module.exports.deleteByQuery = deleteByQuery;
-module.exports.createAuthor = createAuthor;
+
 module.exports.createBook = createBlog;
 module.exports.updateData = updateData;
