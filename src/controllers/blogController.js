@@ -226,9 +226,9 @@ const updateData = async function (req, res) {
           });
         }
       } else {
-        return res.status(401).send({
+        return res.status(403).send({
           status: false,
-          msg: "authenticatin failed!",
+          msg: "authorization failed!",
         });
       }
     } else {
@@ -269,7 +269,7 @@ const deleteBlog = async (req, res) => {
       });
     }
     if (blogFound.authorId != authorId) {
-      return res.status(401).send({
+      return res.status(403).send({
         status: false,
         msg: "You are trying to perform an Unauthorized action",
       });
@@ -313,9 +313,10 @@ const deleteByQuery = async (req, res) => {
         .send({ status: false, msg: "Please enter some data in the body" });
 
         
-    const blog = await blogModel.find({
-      $and: [queryParams, { isDeleted: false }],
-    });
+        queryParams["isDeleted"]=false
+        
+    const blog = await blogModel.find(queryParams);
+    console.log(blog)
     let ar=[]
     blog.forEach((x,i) => {
       if (x["authorId"] != authorId) {
@@ -327,10 +328,9 @@ const deleteByQuery = async (req, res) => {
     console.log("------------------------blogs-------------------")
     console.log(blog)
 
-    if (blog.length == 0)
-      return res.status(404).send({ msg: "Document is already Deleted " });
+    if (blog.length == 0)  return res.status(404).send({ status:false,message: "Document is already Deleted " });
       queryParams["authorId"]=authorId
-      console.log(queryParams)
+     
     const updatedBlog = await blogModel.updateMany(
       queryParams,
       { $set: { isDeleted: true, isPublished: false, deletedAt: Date.now() } },
@@ -339,7 +339,7 @@ const deleteByQuery = async (req, res) => {
 
     return res.status(200).send({ status: true, data: updatedBlog });
   } catch (err) {
-    return res.status(500).send({ error: err.message });
+    return res.status(500).send({status:false, error: err.message });
   }
 };
 
